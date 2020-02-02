@@ -86,6 +86,23 @@ class ChainDb(object):
         where_vals = tuple(where_vals)
         return {'keys': where_keys, 'vals': where_vals}
 
+    # 执行mysql
+    @staticmethod
+    def query(sql=None, tuple_values=None):
+        if not sql:
+            raise Exception('sql语句不能为空')
+        if tuple_values and not isinstance(tuple_values, tuple):
+            raise Exception('参数类型必须是元组')
+        try:
+            with OpenDB() as cs:
+                if tuple_values:
+                    cs.execute(sql, tuple_values)
+                else:
+                    cs.execute(sql)
+                return cs
+        except Exception as e:
+            return e
+
     # 查询条件
     def where(self, where=None, value=None, method='and'):
         where_keys, where_vals = '', []
@@ -141,6 +158,7 @@ class ChainDb(object):
     def format_sql(self):
         if not hasattr(self, 'params'):
             self.params = '*'
+        # select * from user u left join class c on u.user_id = c.user_id where u.user_id = 1
         sql = "SELECT {} FROM {}".format(self.params, self.database)
         if hasattr(self, 'where_keys') and self.where_keys:
             sql += " WHERE {}".format(self.where_keys)
@@ -298,8 +316,4 @@ class ChainDb(object):
                 return row
         except Exception as e:
             return e
-
-
-res = ChainDb('user').field(['username', 'password']).find()
-print(res)
 

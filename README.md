@@ -11,6 +11,20 @@ pip3 install pymysql
 
 ### 三、ChainDb方法介绍
 
+#### 执行sql语句
+##### query(sql, tuple_value)
+|参数|必填|说明|
+|---|---|---|
+|sql|必填|需要执行的sql语句|
+|tuple_value|非必填|需要替换占位符的元组|
+
+> 该方法是执行sql语句，返回执行成功后的游标状态
+
+```
+例1：res = ChainDb('user').query('select * from user') res.fetchall()
+例2：res = ChainDb('user').query('select * from user where id = %s', (7,)) res.fetchone()
+```
+
 #### 新增数据
 ##### insert(data)
 |参数|必填|说明|
