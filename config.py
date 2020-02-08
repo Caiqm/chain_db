@@ -5,8 +5,9 @@ db_config = {
     'port': 3306,
     'user': 'root',
     'passwd': 'root',
-    'db': 'test',
-    'charset': 'utf8mb4'
+    'db': 'novel',
+    'charset': 'utf8mb4',
+    'pre': 'pre_'
 }
 
 config_const = {

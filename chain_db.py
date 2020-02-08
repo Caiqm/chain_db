@@ -1,6 +1,6 @@
 from pymysql import connect
 from pymysql.cursors import DictCursor
-from config import config_const
+from .config import config_const
 
 
 class OpenDB(object):
@@ -34,11 +34,14 @@ class ChainDb(object):
         super(ChainDb, self).__init__()
         self.where_keys = ''
         self.where_vals = []
-        self.params = ''
+        self.params = '*'
         self.limit = ''
         self.order_by = ''
         self.group_by = ''
-        self.database = database
+        if config_const['db_config']['pre']:
+            self.database = config_const['db_config']['pre'] + database
+        else:
+            self.database = database
 
     # 查询条件拼接
     @staticmethod
@@ -135,7 +138,7 @@ class ChainDb(object):
 
     # 分页
     def page(self, page=1, rows=10):
-        self.limit = str((page - 1) * rows) + ',' + str(page * rows)
+        self.limit = str((page - 1) * rows) + ',' + str(rows)
         return self
 
     # 归组
@@ -176,6 +179,7 @@ class ChainDb(object):
             with OpenDB() as cs:
                 sql = self.format_sql()
                 if hasattr(self, 'where_vals') and self.where_vals:
+                    print(sql % self.where_vals)
                     cs.execute(sql, self.where_vals)
                 else:
                     cs.execute(sql)
